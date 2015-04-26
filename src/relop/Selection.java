@@ -40,23 +40,18 @@ public class Selection extends relop.Iterator {
 			
 			final Tuple tuple = iter.getNext();
 			
-			boolean selected = false;
-			
 			// iterate through predicate
 			for(Predicate pred : preds){
 				
 				// evaluate the tuple
 				if(pred.evaluate(tuple)) {
-					selected = true;
 					
+					result.add(tuple);
 					/// break as soon as the tuple satisfy predicate
 					break;
 				}
 			}
 			
-			if(selected) {
-				result.add(tuple);
-			}
 		}
 		
 		// close tree iterator
@@ -115,6 +110,9 @@ public class Selection extends relop.Iterator {
 	 * @throws IllegalStateException if no more tuples
 	 */
 	public Tuple getNext() {
+		if(!hasNext()){
+			throw new IllegalStateException();
+		}
 		return rIter.next();
 	}
 

@@ -35,7 +35,44 @@ public class SimpleJoin extends relop.Iterator {
 		result = new HashSet<Tuple>();
 		
 		
+		// Use Nested Loops Join Algorithm
+		while(left.hasNext()){
+			final Tuple lt = left.getNext();
+			
 		
+			while(right.hasNext()){
+				final Tuple rt = right.getNext();
+				
+				final Tuple newT = Tuple.join(lt, rt, schema);
+				
+				boolean selected = true;
+				
+				/**
+				 * Assume predicates are connected by AND
+				 */
+				for(Predicate pred : preds) {
+					if(!pred.evaluate(newT)){
+						selected = false;
+						break;
+					}
+				}
+				
+				if(selected){
+					result.add(newT);
+				}
+				
+			} // end inner loop
+			
+			// RESET right iterator!
+			right.restart();
+		} // end outer loop
+		
+		// Close child iterators (no longer needed)
+		left.close();
+		right.close();
+		
+		// Set up iterator of the result set
+		iter = result.iterator();
 		
 	}
 
@@ -59,28 +96,28 @@ public class SimpleJoin extends relop.Iterator {
 	 * Restarts the iterator, i.e. as if it were just constructed.
 	 */
 	public void restart() {
-		throw new UnsupportedOperationException("Not implemented");
+		iter = result.iterator();
 	}
 
 	/**
 	 * Returns true if the iterator is open; false otherwise.
 	 */
 	public boolean isOpen() {
-		throw new UnsupportedOperationException("Not implemented");
+		return iter != null;
 	}
 
 	/**
 	 * Closes the iterator, releasing any resources (i.e. pinned pages).
 	 */
 	public void close() {
-		throw new UnsupportedOperationException("Not implemented");
+		iter = null;
 	}
 
 	/**
 	 * Returns true if there are more tuples, false otherwise.
 	 */
 	public boolean hasNext() {
-		throw new UnsupportedOperationException("Not implemented");
+		return isOpen() ? iter.hasNext() : false;
 	}
 
 	/**
@@ -89,7 +126,12 @@ public class SimpleJoin extends relop.Iterator {
 	 * @throws IllegalStateException if no more tuples
 	 */
 	public Tuple getNext() {
-		throw new UnsupportedOperationException("Not implemented");
+		
+		if(!iter.hasNext()) {
+			throw new IllegalStateException();
+		}
+		
+		return iter.next();
 	}
 
 } // public class SimpleJoin extends Iterator
