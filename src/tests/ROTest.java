@@ -354,7 +354,7 @@ class ROTest extends TestDriver {
         tuple.insertIntoFile(groups);
       }
       saveCounts("groups");
-
+	tuple.print();
       // hash join of hash join; selection for output's sake
       saveCounts(null);
       HashJoin join1 = new HashJoin(new FileScan(s_groups, groups),

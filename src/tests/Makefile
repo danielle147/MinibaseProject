@@ -1,4 +1,4 @@
-JDKPATH = /p/java-1.5
+JDKPATH = /usr
 LIBPATH = ../../lib/bufmgr.jar:../../lib/diskmgr.jar:../../lib/heap.jar:../../lib/index.jar
 CLASSPATH = $(JDKPATH)/lib/classes.zip:.:..:$(LIBPATH):../relop:../global
 BINPATH = $(JDKPATH)/bin
